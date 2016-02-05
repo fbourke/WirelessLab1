@@ -12,7 +12,7 @@ y = zeros(1,1e6);
 
 x = 1:1e3;
 y = cos(x*pi);
-pw = 50;
+pw = 30;
 out = conv(upsample(y,pw),ones(1,pw));
 sample_freq = 1e6; % minimum .25 megasamples/sec
 datarate = sample_freq/pw
