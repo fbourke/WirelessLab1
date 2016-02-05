@@ -10,9 +10,9 @@ y = zeros(1,1e6);
 % y(8e5:9e5) = -1;
 % y(9e5:10e5) = 1;
 
-x = 1:1e2;
+x = 1:1e3;
 y = cos(x*pi);
-pw = 1e4;
+pw = 1e2;
 out = conv(upsample(y,pw),ones(1,pw));
 
 plot(out)
