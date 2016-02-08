@@ -1,38 +1,14 @@
 function res = process_data()
     load 'rxdata/rx5_1m'
 
-    function packet_start = packet_detect(x)
-        dfactor = 100;
-        xd = x(1:dfactor:end); % downsample for speed
-        nloops = 1000;
-        thresh = 1.1;
-
-        packet_start = 1;
-
-        win_len = floor(length(xd)/nloops)
-        win_l = 1:win_len;
-        win_r = win_len:2*win_len;
-
-        for i = 1:nloops
-            l_pow = pwelch(xd(win_l));
-            r_pow = pwelch(xd(win_r));
-
-            if r_pow/l_pow > thresh
-                packet_start = i*dfactor;
-                break
-            end
-
-            win_l = win_l+win_len;
-            win_r = win_r+win_len;
-        end
-    end
-
     j = sqrt(-1);
 
     data = data';
-    datalen = length(data)
-    seg = data;
-    seglen = length(seg)
+    startindex = packet_detect(data)
+
+    % window = 2.4480e6:2.4510e6;
+    window = startindex:2.4510e6;
+    seg = data(window);
     xs = 1:length(seg);
 
     SEG = fft(seg.^2);
@@ -40,7 +16,7 @@ function res = process_data()
     figure(1)
     plot(abs(SEG))
 
-    [peak_amp, peak_bin] = max(abs(SEG))
+    [peak_amp, peak_bin] = max(abs(SEG));
 
     scaling = 2*pi;
 
@@ -49,9 +25,7 @@ function res = process_data()
     comp = exp(-j*f_m/2*xs);
     seg_demod = seg.*comp;
 
-    window = 2.4485e6:2.4505e6;
-
-    filtered = schmitt(real(seg_demod(window)),0.002,-0.002);
+    filtered = schmitt(real(seg_demod), 0.002, -0.002);
     sscale = .017;
 
     figure(2)
@@ -59,8 +33,11 @@ function res = process_data()
     plot(real(seg))
     hold on
     plot(real(seg_demod))
-    plot(window, filtered*sscale-sscale/2, 'r', 'linewidth', 2)
-    xlim([window(1), window(end)])
+    plot(filtered*sscale-sscale/2, 'r', 'linewidth', 2)
 
     legend('Seg', 'Seg Demod', 'Schmitt Data')
+
+    figure(3)
+    clf
+    plot(real(data))
 end
