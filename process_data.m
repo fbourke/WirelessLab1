@@ -1,5 +1,5 @@
 function res = process_data()
-    load 'rxdata/rx4'
+    load 'rxdata/rx5_1m'
 
     function packet_start = packet_detect(x)
         dfactor = 100;
@@ -27,7 +27,6 @@ function res = process_data()
         end
     end
 
-
     j = sqrt(-1);
 
     data = data';
@@ -50,11 +49,18 @@ function res = process_data()
     comp = exp(-j*f_m/2*xs);
     seg_demod = seg.*comp;
 
-    filtered = schmitt(real(seg_demod(window(1):window(end))),0.002,-0.002);
+    window = 2.4485e6:2.4505e6;
+
+    filtered = schmitt(real(seg_demod(window)),0.002,-0.002);
+    sscale = .017;
 
     figure(2)
+    clf
     plot(real(seg))
     hold on
     plot(real(seg_demod))
-    legend('Seg', 'Seg Demod')
+    plot(window, filtered*sscale-sscale/2, 'r', 'linewidth', 2)
+    xlim([window(1), window(end)])
+
+    legend('Seg', 'Seg Demod', 'Schmitt Data')
 end
