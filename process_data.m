@@ -25,9 +25,10 @@ function res = process_data()
     vfilt = schmitt(real(v), thresh, -thresh);
 
     pw = 30;
-    edges = diff(vfilt);
-    edges = edges(edges>0);
-    istart = edges(1)+pw/2;
+    vdiff = diff(vfilt);
+    edge1 = find(vdiff, 1);
+    % 15 for the training sequence
+    istart = edge1+15*pw+pw/2;
 
     bits = vfilt(istart:pw:end)
 
