@@ -1,12 +1,12 @@
 function res = process_data()
-    load 'rxdata/rx10'
+    load 'rxdata/hello'
 
     j = sqrt(-1);
 
     data = data';
     startindex = packet_detect(data)
 
-    window = startindex:startindex+30000;
+    window = startindex:startindex+20000;
     seg = data(window);
     xs = 1:length(seg);
 
@@ -24,8 +24,8 @@ function res = process_data()
     comp = exp(-j*f_m/2*xs);
     seg_demod = seg.*comp;
 
-    mag = 1e-3
-    thresh = .4*mag
+    mag = 3e-3
+    thresh = .5*mag
 
     filtered = schmitt(real(seg_demod), thresh, -thresh);
     sscale = .017;
