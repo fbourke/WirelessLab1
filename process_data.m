@@ -6,7 +6,7 @@ function res = process_data()
     data = data';
     startindex = packet_detect(data)
 
-    window = startindex:startindex+20000;
+    window = startindex:startindex+30000;
     seg = data(window);
     xs = 1:length(seg);
 
@@ -23,37 +23,46 @@ function res = process_data()
 
     % costas
 
-    B = 4;
-    Phi = zeros(size(seg_demod));
-    for i = 1:length(seg_demod)-1
-        v = seg_demod(i);
-        e = -real(v)*imag(v);
+    % important for costas loop
+    seg_w = seg/std(seg);
+    B = .8;
+    Phi = zeros(size(seg_w));
+    v = zeros(size(seg_w));
+    for i = 1:length(seg_w)-1
+        v(i) = seg_w(i)*exp(j*Phi(i));
+        e = -real(v(i))*imag(v(i));
         Phi(i+1) = Phi(i) + B*e;
     end
 
-    size(seg_demod)
-    size(Phi)
-    seg_costas = seg_demod.*exp(j*Phi);
-    size(seg_costas)
+    seg_w = seg_demod/std(seg_demod);
+    B = .8;
+    Phi = zeros(size(seg_w));
+    vfoff = zeros(size(seg_w));
+    for i = 1:length(seg_w)-1
+        vfoff(i) = seg_w(i)*exp(j*Phi(i));
+        e = -real(vfoff(i))*imag(vfoff(i));
+        Phi(i+1) = Phi(i) + B*e;
+    end
+
+    % schmitt
+    % mag = 3e-3
+    % thresh = .5*mag
+    % filtered = schmitt(real(seg_costas), thresh, -thresh);
+    % sscale = .017;
 
     figure(2)
     clf
     plot(real(seg_demod))
     hold on
-    plot(real(seg_costas))
-    legend('F-offset demodulated', 'Costas Demodulated')
-    
-    % schmitt
-    % mag = 3e-3
-    % thresh = .5*mag
-    % filtered = schmitt(real(seg_demod), thresh, -thresh);
-    % sscale = .017;
+    plot(real(v))
+    plot(real(vfoff))
+    legend('Original signal', 'Costas demodulated', 'F-offset and Costas demodulated')
 
     % figure(3)
     % clf
     % plot(real(seg))
     % hold on
-    % plot(real(seg_demod))
+    % plot(real(seg_costas))
     % plot(filtered*sscale-sscale/2, 'r', 'linewidth', 2)
 
     % legend('Seg', 'Seg Demod', 'Schmitt Data')
