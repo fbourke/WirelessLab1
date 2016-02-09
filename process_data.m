@@ -10,8 +10,7 @@ function res = process_data()
     seg = data(window);
 
     % costas
-    seg_mag = std(seg);
-    seg_w = seg/seg_mag;% important for costas loop
+    seg_w = seg/std(seg);% important for costas loop
     B = .8;
     Phi = zeros(size(seg_w));
     v = zeros(size(seg_w));
@@ -21,13 +20,23 @@ function res = process_data()
         Phi(i+1) = Phi(i) + B*e;
     end
 
-    thresh = .4*seg_mag;
-    filtered = schmitt(real(v), thresh, -thresh);
+    vmag = std(v);
+    thresh = .7*vmag;
+    vfilt = schmitt(real(v), thresh, -thresh);
+
+    pw = 30;
+    edges = diff(vfilt);
+    edges = edges(edges>0);
+    istart = edges(1)+pw/2;
+
+    bits = vfilt(istart:pw:end)
+
+    save hellooo_processed
 
     figure(2)
     clf
     plot(real(v))
     hold on
-    plot(filtered-.5, 'g', 'linewidth', 2)
+    plot(vfilt*vmag-vmag/2, 'g', 'linewidth', 2)
     legend('Costas demodulated', 'Schmitt Corrected')
 end
