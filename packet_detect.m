@@ -1,16 +1,16 @@
 function packet_start = packet_detect(x)
-    dfactor = 100;
+    dfactor = 1000;
     xd = x(1:dfactor:end); % downsample for speed
 
     % window should smaller than/fairly close to the width of a pulse
-    win_len = 2000/dfactor;
+    win_len = 10000/dfactor;
     step = floor(win_len);
     nloops = floor((length(x) - win_len*2)/(step+1));
 
     win_l = 1:win_len;
     win_r = win_len:2*win_len;
 
-    thresh = 100;
+    thresh = 10;
 
     packet_start = 1;
 
@@ -19,7 +19,7 @@ function packet_start = packet_detect(x)
         r_pow = mean(pwelch(xd(win_r)));
 
         if r_pow/l_pow > thresh
-            packet_start = i*win_len*dfactor;
+            packet_start = floor((i-.5)*win_len*dfactor);
             break
         end
 
