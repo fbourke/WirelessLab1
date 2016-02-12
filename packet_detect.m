@@ -19,7 +19,7 @@ function packet_start = packet_detect(x)
         r_pow = mean(pwelch(xd(win_r)));
 
         if r_pow/l_pow > thresh
-            packet_start = floor((i-.5)*win_len*dfactor);
+            packet_start = floor(i*win_len*dfactor);
             break
         end
 
