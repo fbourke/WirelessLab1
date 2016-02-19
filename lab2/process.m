@@ -23,16 +23,18 @@ h12 = mean(h12x(~isinf(h12x)));
 h22 = mean(h22x(~isinf(h22x)));
 
 H = [h11 h12;
-     h21 h22]
+     h21 h22];
 
 w = inv(H')*[1; 0];
 
-xhat = y1*w';
+y = transpose([y1 y2]);
+
+xhat = w'*y;
 
 figure(1)
 clf
 plot(real(xhat))
 hold on
-plot(imag(xhat))
+plot 
 
-legend('Real 1', 'Real 2', 'Imag 1', 'Imag 2')
+legend('Real x1', 'Real x2', 'Imag 1', 'Imag 2')
