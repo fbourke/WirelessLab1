@@ -30,11 +30,24 @@ w = inv(H')*[1; 0];
 y = transpose([y1 y2]);
 
 xhat = w'*y;
+data = schmitt(real(xhat), 1);
+(1:length(data))-td;
 
 figure(1)
-clf
+subplot(211);
 plot(real(xhat))
 hold on
-plot 
+plot(data.*2-1)
+plot((1:length(x1))+td+3,x1)
+% legend('Real x1', 'Real x2', 'Imag 1', 'Imag 2')
 
-legend('Real x1', 'Real x2', 'Imag 1', 'Imag 2')
+subplot(212);
+w = inv(H')*[0; 1];
+y = transpose([y1 y2]);
+xhat = w'*y;
+data = schmitt(real(xhat), 1);
+(1:length(data))-td;
+plot(real(xhat))
+hold on
+plot(data.*2-1)
+plot((1:length(x2))+td+3,x2)
