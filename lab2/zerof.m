@@ -64,5 +64,3 @@ axes;
 h = title('Signal Isolation With Zero Forcing');
 set(gca,'Visible','off');
 set(h,'Visible','on');
-
-save zerof

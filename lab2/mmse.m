@@ -29,7 +29,11 @@ H = [h11 h12;
 h1 = H(:,1);
 h2 = H(:,2);
 y = transpose([y1 y2]);
-A = h1*h1' + h2*h2';
+
+sig = [std(abs(y1(ns))) 0;
+        0 std(abs(y2(ns)))]
+
+A = h1*h1' + h2*h2' + sig;
 
 w1 = inv(A')*h1;
 
@@ -83,5 +87,3 @@ axes;
 h = title('Signal Isolation With MMSE Estimation');
 set(gca,'Visible','off');
 set(h,'Visible','on');
-
-save mmse
