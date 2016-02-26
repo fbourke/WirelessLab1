@@ -1,7 +1,7 @@
 clear all;
 
 N = 4;
-tlen = 10;
+tlen = 200;
 
 tr = round(rand(1, tlen));
 
@@ -13,5 +13,11 @@ for i = 1:N
     Y(:,:, i) = MIMOChannel4x4(x);
 end
 
-tr
-Y
+figure
+clf
+plot(real(Y(:,:,1)))
+hold on
+plot(real(Y(:,:,2)))
+plot(real(Y(:,:,3)))
+plot(real(Y(:,:,4)))
+legend('y1', 'y2', 'y3', 'y4', 'y1', 'y2', 'y3', 'y4', 'y1', 'y2', 'y3', 'y4', 'y1', 'y2', 'y3', 'y4')
