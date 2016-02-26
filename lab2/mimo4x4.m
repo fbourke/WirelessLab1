@@ -15,9 +15,9 @@ end
 
 figure
 clf
-plot(real(Y(:,:,1)))
+plot(abs(reshape(Y(1,:,:),[],size(Y(1,:,:),2),1)))
 hold on
-plot(real(Y(:,:,2)))
-plot(real(Y(:,:,3)))
-plot(real(Y(:,:,4)))
+plot(abs(reshape(Y(2,:,:),[],size(Y(1,:,:),2),1)))
+plot(abs(reshape(Y(3,:,:),[],size(Y(1,:,:),2),1)))
+plot(abs(reshape(Y(4,:,:),[],size(Y(1,:,:),2),1)))
 legend('y1', 'y2', 'y3', 'y4', 'y1', 'y2', 'y3', 'y4', 'y1', 'y2', 'y3', 'y4', 'y1', 'y2', 'y3', 'y4')
