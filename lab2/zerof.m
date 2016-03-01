@@ -24,7 +24,7 @@ h22 = mean(h22x(~isinf(h22x)));
 H = [h11 h12;
      h21 h22];
 
-w = inv(H')*[1; 0];
+w = inv(H')*[1; 0]
 
 y = transpose([y1 y2]);
 

@@ -23,12 +23,23 @@ for i = 1:N % for each antenna (cell of Y) (row of H)
     end
 end
 
-H
+Hdag = inv(H');
+I = eye(N,N);
 
-% figure
-% clf
-% plot(abs(Y(1,:,4)))
-% hold on
-% plot(abs(Y(:,:,2)))
-% plot(abs(Y(:,:,3)))
-% plot(abs(Y(:,:,4)))
+for i = 1:N
+    W(:,i) = Hdag*I(:,i);
+end
+
+txlen = 200;
+X2 = round(rand(4, txlen));
+
+Y2 = MIMOChannel4x4(X2);
+
+for i = 1:N
+    Xhat(i,:) = W(:,i)'*Y2;
+end
+
+figure
+plot(real(X2(1,:)))
+hold on
+plot(real(Xhat(1,:)), '--')
