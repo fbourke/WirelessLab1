@@ -43,7 +43,7 @@ for j = 1:N
     Xhat(j,:) = W(:,j)'*Y2;
     Xnorm(j,:) = real(Xhat(j,:))/max(real(Xhat(j,:)));
     x = Xnorm(j,:);
-    Xfilt(j,:) = schmitt(x, .51, .49);
+    Xfilt(j,:) = schmitt(x, .55, .45);
 end
 
 figure
