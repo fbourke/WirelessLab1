@@ -14,7 +14,6 @@ for i = 1:length(x)
         if x(i) < l_thresh
             state = 0;
         end
-    
     elseif state == 0
         if x(i) > h_thresh
             state = 1;

@@ -43,7 +43,7 @@ for j = 1:N
     Xhat(j,:) = W(:,j)'*Y2;
     Xnorm(j,:) = real(Xhat(j,:))/max(real(Xhat(j,:)));
     x = Xnorm(j,:);
-    Xfilt(j,:) = schmitt(x, .55, .45);
+    Xfilt(j,:) = schmitt(x, mean(x), mean(x));
 end
 
 figure
@@ -51,3 +51,7 @@ plot(real(X2(1,:)), 'linewidth', 2)
 hold on
 plot(Xnorm(1,:), '--', 'linewidth', 2)
 plot(Xfilt(1,:), '--', 'linewidth', 2)
+
+plot(real(X2(2,:)), 'linewidth', 2)
+plot(Xnorm(2,:), '--', 'linewidth', 2)
+plot(Xfilt(2,:), '--', 'linewidth', 2)
