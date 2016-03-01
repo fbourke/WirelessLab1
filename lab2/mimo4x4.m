@@ -1,23 +1,34 @@
 clear all;
 
 N = 4;
-tlen = 200;
+tlen = 100;
 
 tr = round(rand(1, tlen));
 
 Y = zeros(4, tlen, 4);
-x = zeros(4, tlen);
+X = zeros(4, tlen, 4);
 for i = 1:N
-    x = zeros(4, tlen);
-    x(i, :) = tr;
-    Y(:,:, i) = MIMOChannel4x4(x);
+    X(i,:,i) = tr;
+    Y(:,:,i) = MIMOChannel4x4(X(:,:,i));
 end
 
-figure
-clf
-plot(abs(reshape(Y(1,:,:),[],size(Y(1,:,:),2),1)))
-hold on
-plot(abs(reshape(Y(2,:,:),[],size(Y(1,:,:),2),1)))
-plot(abs(reshape(Y(3,:,:),[],size(Y(1,:,:),2),1)))
-plot(abs(reshape(Y(4,:,:),[],size(Y(1,:,:),2),1)))
-legend('y1', 'y2', 'y3', 'y4', 'y1', 'y2', 'y3', 'y4', 'y1', 'y2', 'y3', 'y4', 'y1', 'y2', 'y3', 'y4')
+% order: row, col, cell
+% each cell represents a trial
+% cell 1 was Tx1 transmitting
+
+for i = 1:N % for each antenna (cell of Y) (row of H)
+    for j = 1:N % for each training sequence
+        h = Y(j,:,i)./X(i,:,i);
+        H(i,j) = mean(h(~isinf(h)));
+    end
+end
+
+H
+
+% figure
+% clf
+% plot(abs(Y(1,:,4)))
+% hold on
+% plot(abs(Y(:,:,2)))
+% plot(abs(Y(:,:,3)))
+% plot(abs(Y(:,:,4)))
