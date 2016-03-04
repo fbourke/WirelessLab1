@@ -5,8 +5,8 @@ tlen = 1000;
  
 tr = round(rand(1, tlen))*2-0.5;
  
-Y = zeros(4, tlen, 4);
-X = zeros(4, tlen, 4);
+Y = zeros(N, tlen, N);
+X = zeros(N, tlen, N);
 for i = 1:N
     X(i,:,i) = tr;
     Y(:,:,i) = MIMOChannel4x4(X(:,:,i));
@@ -25,22 +25,25 @@ end
  
 W = inv(H');
 I = eye(N,N);
- 
+
 txlen = 19;
 pw = 10;
-Xgen = round(rand(4, txlen));
+Xgen = round(rand(N, txlen));
 for i = 1:N
     X2(i,:) = conv(upsample(Xgen(i,:), pw), ones(1, pw));
 end
+tlen = txlen*pw
  
 Y2 = MIMOChannel4x4(X2);
 
 Xhat = W'*Y2;
 
-N = abs(Xhat - X2);
-SNR = mean((abs(X2)./N)');
-mag2db(SNR)
+n = abs(Xhat - X2);
+SNR = mag2db(mean((abs(X2)./n)'));
 
+SNR = round(SNR, 3, 'significant')
+
+xpos = tlen*.8;
 figure(1)
 clf
 subplot(411)
@@ -48,21 +51,31 @@ plot(real(X2(1,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(1,:)), '--', 'linewidth', 2)
 ylim([0 1])
+t = text(xpos,.4,['SNR: ' num2str(SNR(1)) ' dB']);
+t.FontSize = 20;
+legend('Tx data', 'Estimated Rx data')
  
 subplot(412)
 plot(real(X2(2,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(2,:)), '--', 'linewidth', 2)
 ylim([0 1])
+t = text(xpos,.4,['SNR: ' num2str(SNR(2)) ' dB']);
+t.FontSize = 20;
 
 subplot(413)
 plot(real(X2(3,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(3,:)), '--', 'linewidth', 2)
 ylim([0 1])
+t = text(xpos,.4,['SNR: ' num2str(SNR(3)) ' dB']);
+t.FontSize = 20;
  
 subplot(414)
 plot(real(X2(4,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(4,:)), '--', 'linewidth', 2)
 ylim([0 1])
+t = text(xpos,.4,['SNR: ' num2str(SNR(4)) ' dB']);
+t.FontSize = 20;
+xlabel('Sample Number')
