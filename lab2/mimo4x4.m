@@ -23,12 +23,8 @@ for i = 1:N % for each antenna (cell of Y) (row of H)
     end
 end
  
-Hdag = inv(H');
+W = inv(H');
 I = eye(N,N);
- 
-for i = 1:N
-    W(:,i) = Hdag*I(:,i);
-end
  
 txlen = 19;
 pw = 10;
@@ -38,14 +34,8 @@ for i = 1:N
 end
  
 Y2 = MIMOChannel4x4(X2);
- 
-for j = 1:N
-    Xhat(j,:) = W(:,j)'*Y2;
-%     Xnorm(j,:) = real(Xhat(j,:))/max(real(Xhat(j,:)));
-    %x = Xnorm(j,:);
-    %th = mean(x)
-    %Xfilt(j,:) = schmitt(x, th+0.05, th-0.05);
-end
+
+Xhat = W'*Y2;
  
 figure
 subplot(411)
@@ -53,25 +43,21 @@ plot(real(X2(1,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(1,:)), '--', 'linewidth', 2)
 ylim([0 1])
-% plot(Xfilt(1,:), '--', 'linewidth', 2)
  
 subplot(412)
 plot(real(X2(2,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(2,:)), '--', 'linewidth', 2)
 ylim([0 1])
-% plot(Xfilt(2,:), '--', 'linewidth', 2)
- 
+
 subplot(413)
 plot(real(X2(3,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(3,:)), '--', 'linewidth', 2)
 ylim([0 1])
-% plot(Xfilt(3,:), '--', 'linewidth', 2)
  
 subplot(414)
 plot(real(X2(4,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(4,:)), '--', 'linewidth', 2)
 ylim([0 1])
-% plot(Xfilt(4,:), '--', 'linewidth', 2)
