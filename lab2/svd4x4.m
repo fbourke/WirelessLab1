@@ -32,10 +32,16 @@ end
 
 [U, S, V] = svd(H);
 
-Y2 = MIMOChannel4x4(V*X2);
+X2t = V*X2;
+Y2 = MIMOChannel4x4(X2t);
 Xhat = inv(S)*U'*Y2;
+
+N = abs(Xhat - X2);
+SNR = mean((abs(X2)./N)');
+mag2db(SNR)
  
-figure
+figure(1)
+clf
 subplot(411)
 plot(real(X2(1,:)), 'linewidth', 2)
 hold on

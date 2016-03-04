@@ -36,8 +36,13 @@ end
 Y2 = MIMOChannel4x4(X2);
 
 Xhat = W'*Y2;
- 
-figure
+
+N = abs(Xhat - X2);
+SNR = mean((abs(X2)./N)');
+mag2db(SNR)
+
+figure(1)
+clf
 subplot(411)
 plot(real(X2(1,:)), 'linewidth', 2)
 hold on
