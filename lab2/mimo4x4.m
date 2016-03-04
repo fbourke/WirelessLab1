@@ -23,12 +23,8 @@ for i = 1:N % for each antenna (cell of Y) (row of H)
     end
 end
  
-Hdag = inv(H');
+W = inv(H');
 I = eye(N,N);
- 
-for i = 1:N
-    W(:,i) = Hdag*I(:,i);
-end
  
 txlen = 19;
 pw = 10;
