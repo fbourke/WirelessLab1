@@ -1,6 +1,6 @@
-function res = mimo4x4(plotting)
+function SNR = mimo4x4(plotting)
     N = 4;
-    tlen = 1000;
+    tlen = 100;
      
     tr = round(rand(1, tlen))*2-1;
      
@@ -40,7 +40,7 @@ function res = mimo4x4(plotting)
     n = abs(Xhat - X2);
     SNR = mag2db(mean((abs(X2)./n)'));
 
-    SNR = round(SNR, 3, 'significant')
+    SNR = round(SNR, 3, 'significant');
 
     if plotting
         xpos = tlen*.8;

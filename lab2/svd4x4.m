@@ -1,4 +1,4 @@
-function res = svd4x4(plotting)
+function SNR = svd4x4(plotting)
     N = 4;
     tlen = 100;
 
@@ -39,7 +39,7 @@ function res = svd4x4(plotting)
     n = abs(Xhat - X2);
     SNR = mag2db(mean((abs(X2)./n)'));
 
-    SNR = round(SNR, 3, 'significant')
+    SNR = round(SNR, 3, 'significant');
 
     if plotting
         xpos = tlen*.8;
