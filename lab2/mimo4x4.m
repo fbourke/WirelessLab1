@@ -52,22 +52,26 @@ subplot(411)
 plot(real(X2(1,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(1,:)), '--', 'linewidth', 2)
+ylim([0 1])
 % plot(Xfilt(1,:), '--', 'linewidth', 2)
  
 subplot(412)
 plot(real(X2(2,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(2,:)), '--', 'linewidth', 2)
+ylim([0 1])
 % plot(Xfilt(2,:), '--', 'linewidth', 2)
  
 subplot(413)
 plot(real(X2(3,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(3,:)), '--', 'linewidth', 2)
+ylim([0 1])
 % plot(Xfilt(3,:), '--', 'linewidth', 2)
  
 subplot(414)
 plot(real(X2(4,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(4,:)), '--', 'linewidth', 2)
+ylim([0 1])
 % plot(Xfilt(4,:), '--', 'linewidth', 2)
