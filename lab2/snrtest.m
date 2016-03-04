@@ -9,3 +9,5 @@ end
 
 mimosnr = mean(mimo4x4s)
 svdsnr = mean(svd4x4s)
+
+ratio = svdsnr./mimosnr
