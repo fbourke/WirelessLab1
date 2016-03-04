@@ -3,7 +3,7 @@ clear all;
 N = 4;
 tlen = 100;
 
-tr = round(rand(1, tlen));
+tr = round(rand(1, tlen))*2-1;
 
 Y = zeros(N, tlen, N);
 X = zeros(N, tlen, N);
@@ -25,7 +25,7 @@ end
 
 txlen = 19;
 pw = 10;
-Xgen = round(rand(N, txlen));
+Xgen = round(rand(N, txlen))*2-1;
 for i = 1:N
     X2(i,:) = conv(upsample(Xgen(i,:), pw), ones(1, pw));
 end
@@ -43,14 +43,15 @@ SNR = mag2db(mean((abs(X2)./n)'));
 SNR = round(SNR, 3, 'significant')
 
 xpos = tlen*.8;
+ypos = -.1;
 figure(1)
 clf
 subplot(411)
 plot(real(X2(1,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(1,:)), '--', 'linewidth', 2)
-ylim([0 1])
-t = text(xpos,.4,['SNR: ' num2str(SNR(1)) ' dB']);
+ylim([-1 1])
+t = text(xpos,ypos,['SNR: ' num2str(SNR(1)) ' dB']);
 t.FontSize = 20;
 legend('Tx data', 'Estimated Rx data')
  
@@ -58,23 +59,23 @@ subplot(412)
 plot(real(X2(2,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(2,:)), '--', 'linewidth', 2)
-ylim([0 1])
-t = text(xpos,.4,['SNR: ' num2str(SNR(2)) ' dB']);
+ylim([-1 1])
+t = text(xpos,ypos,['SNR: ' num2str(SNR(2)) ' dB']);
 t.FontSize = 20;
 
 subplot(413)
 plot(real(X2(3,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(3,:)), '--', 'linewidth', 2)
-ylim([0 1])
-t = text(xpos,.4,['SNR: ' num2str(SNR(3)) ' dB']);
+ylim([-1 1])
+t = text(xpos,ypos,['SNR: ' num2str(SNR(3)) ' dB']);
 t.FontSize = 20;
  
 subplot(414)
 plot(real(X2(4,:)), 'linewidth', 2)
 hold on
 plot(real(Xhat(4,:)), '--', 'linewidth', 2)
-ylim([0 1])
-t = text(xpos,.4,['SNR: ' num2str(SNR(4)) ' dB']);
+ylim([-1 1])
+t = text(xpos,ypos,['SNR: ' num2str(SNR(4)) ' dB']);
 t.FontSize = 20;
 xlabel('Sample Number')
