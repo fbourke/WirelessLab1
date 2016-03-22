@@ -30,7 +30,7 @@ function SNR = svd4x4(plotting)
     end
     tlen = txlen*pw;
 
-    [U, S, V] = svd(H);
+    [U, S, V] = svd(H)
 
     X2t = V*X2;
     Y2 = MIMOChannel4x4(X2t);
@@ -47,37 +47,37 @@ function SNR = svd4x4(plotting)
         figure(1)
         clf
         subplot(411)
-        plot(real(X2(1,:)), 'linewidth', 2)
+        plot(real(X2(1,:)), 'linewidth', 5)
         hold on
-        plot(real(Xhat(1,:)), '--', 'linewidth', 2)
+        plot(real(Xhat(1,:)), '--', 'linewidth', 5)
         ylim([-1 1])
-        t = text(xpos,ypos,['SNR: ' num2str(SNR(1)) ' dB']);
-        t.FontSize = 20;
+        % t = text(xpos,ypos,['SNR: ' num2str(SNR(1)) ' dB']);
+        % t.FontSize = 20;
         legend('Tx data', 'Estimated Rx data')
          
         subplot(412)
-        plot(real(X2(2,:)), 'linewidth', 2)
+        plot(real(X2(2,:)), 'linewidth', 5)
         hold on
-        plot(real(Xhat(2,:)), '--', 'linewidth', 2)
+        plot(real(Xhat(2,:)), '--', 'linewidth', 5)
         ylim([-1 1])
-        t = text(xpos,ypos,['SNR: ' num2str(SNR(2)) ' dB']);
-        t.FontSize = 20;
+        % t = text(xpos,ypos,['SNR: ' num2str(SNR(2)) ' dB']);
+        % t.FontSize = 20;
 
         subplot(413)
-        plot(real(X2(3,:)), 'linewidth', 2)
+        plot(real(X2(3,:)), 'linewidth', 5)
         hold on
-        plot(real(Xhat(3,:)), '--', 'linewidth', 2)
+        plot(real(Xhat(3,:)), '--', 'linewidth', 5)
         ylim([-1 1])
-        t = text(xpos,ypos,['SNR: ' num2str(SNR(3)) ' dB']);
-        t.FontSize = 20;
+        % t = text(xpos,ypos,['SNR: ' num2str(SNR(3)) ' dB']);
+        % t.FontSize = 20;
          
         subplot(414)
-        plot(real(X2(4,:)), 'linewidth', 2)
+        plot(real(X2(4,:)), 'linewidth', 5)
         hold on
-        plot(real(Xhat(4,:)), '--', 'linewidth', 2)
+        plot(real(Xhat(4,:)), '--', 'linewidth', 5)
         ylim([-1 1])
-        t = text(xpos,ypos,['SNR: ' num2str(SNR(4)) ' dB']);
-        t.FontSize = 20;
+        % t = text(xpos,ypos,['SNR: ' num2str(SNR(4)) ' dB']);
+        % t.FontSize = 20;
         xlabel('Sample Number')
     end
 end
