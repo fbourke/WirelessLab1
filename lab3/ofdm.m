@@ -1,28 +1,22 @@
 clear all
-close all
 clc
 
 N = 64;
 
-training = [1 1 -1 1 1 -1 -1 1 1 1 -1 1 1 -1 1 -1 -1 1 1 1 1 -1 1 1 1 1 1 -1 1 -1 1 -1 -1 -1 -1 1 1 -1 1 -1 -1 -1 1 1 -1 -1 -1 1 1 1 -1 1 1 -1 -1 -1 1 -1 1 -1 1 -1 1 1];
+for i = 1:2*N
+    training = (round(rand(1, N))-.5)*2;
+    Hests(i,:) = ofdm_hest(training);
+end
 
-data = (round(rand(1, N))-.5)*2
+data = (round(rand(1, N))-.5)*2;
 
-Xtild = training;
-xtild = ifft(Xtild);
-
-xtx = [xtild(N-15:N) xtild];
-
-ytild = nonflat_channel(xtx);
-ytild = ytild(17:N+16);
-
-Ytild = fft(ytild)/N;
-
-H = Ytild./Xtild;
+H = mean(Hests);
 
 Xhat = ofdm_tx(data, H);
 
 figure(1)
-plot(data)
+clf
+plot(abs(H)*1e2)
 hold on
+plot(data)
 plot(real(Xhat))
