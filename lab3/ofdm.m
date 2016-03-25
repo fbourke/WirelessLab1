@@ -3,16 +3,12 @@ clc
 
 N = 64;
 
-for i = 1:2*N
-    training = (round(rand(1, N))-.5)*2;
-    Hests(i,:) = ofdm_hest(training);
-end
+training = (round(rand(1, N))-.5)*2;
+[H, f_est] = ofdm_sc_hest(training);
 
 data = (round(rand(1, N))-.5)*2;
 
-H = mean(Hests);
-
-Xhat = ofdm_tx(data, H);
+Xhat = ofdm_sc_tx(data, H, f_est);
 
 figure(1)
 clf
