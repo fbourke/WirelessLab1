@@ -12,14 +12,14 @@ function Xhat = ofdm_sc_tx(Xtild)
     end 
 
     packet = [packet reshape(htrs', 1, []) pext(ifft(Xtild))];
-    length(packet)
+    % length(packet)
 
     packet_rx = nonflat_channel_timing_error(packet);
     pstart = packet_detect(packet_rx)
-    length(packet_rx)
+    % length(packet_rx)
 
     SCHMIDL_COX = packet_rx(pstart:pstart+N*3-1);
-    length(SCHMIDL_COX)
+    % length(SCHMIDL_COX)
 
     idx = pstart+N*3;
 
@@ -29,10 +29,10 @@ function Xhat = ofdm_sc_tx(Xtild)
         HTRS(:,i) = packet_rx(idx:idx+plen-1);
         idx = idx+plen;
     end
-    size(HTRS)
+    % size(HTRS)
 
     DATA = packet_rx(idx:idx+plen-1);
-    length(DATA)
+    % length(DATA)
 
     figure(1)
     clf

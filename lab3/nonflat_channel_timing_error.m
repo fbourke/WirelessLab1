@@ -18,7 +18,7 @@ h(8:8+length(tmp)-1) = tmp;
 y = conv(x,h);
 
 % generate frequency offset
-f_delta = pi*rand(1)/64;
+f_delta = pi*rand(1)/64
 
 % apply frequency offset
 y = y.*exp(1i*f_delta*[1:length(y)]);
