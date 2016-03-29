@@ -34,13 +34,6 @@ function Xhat = ofdm_sc_tx(Xtild)
     DATA = packet_rx(idx:idx+plen-1);
     % length(DATA)
 
-    figure(1)
-    clf
-    plot(real(packet))
-    hold on
-    plot(real(packet_rx))
-    legend('Tx', 'Rx')
-
     diffs = SCHMIDL_COX(end-N+1:end)./SCHMIDL_COX(end-2*N+1:end-N);
 
     f_ests = log(diffs)./(j*N);
@@ -48,7 +41,7 @@ function Xhat = ofdm_sc_tx(Xtild)
 
     offset = exp(-j*f_est*N);
 
-    % H estimation
+    %% H estimation ========================
     HTRS = HTRS.*offset;
     for i = 1:4
         Hunext = fft(unpext(HTRS(:,i)));
@@ -56,12 +49,11 @@ function Xhat = ofdm_sc_tx(Xtild)
         Hests(:,i) = Hunext./unpext(htrs(:,i));
     end
 
-    Hest = mean(Hests);
+    H = mean(Hests');
 
+    %% Data processing =====================
     DATA = DATA.*offset;
 
-    % Ytild = fft(ytild_f_est)/N;
-
-    % ytild = ytild.*exp(-j*f_est);
-    % Ytild = fft(ytild)/N;
+    Xhat = unpext(DATA);
+    Xhat = fft(Xhat)/length(Xhat)./H;
 end
