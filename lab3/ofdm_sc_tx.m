@@ -12,14 +12,11 @@ function Xhat = ofdm_sc_tx(Xtild)
     end 
 
     packet = [packet reshape(htrs', 1, []) pext(ifft(Xtild))];
-    % length(packet)
 
-    packet_rx = nonflat_channel_timing_error(packet);
+    packet_rx = nonflat_channel(packet);
     pstart = packet_detect(packet_rx)
-    % length(packet_rx)
 
     SCHMIDL_COX = packet_rx(pstart:pstart+N*3-1);
-    % length(SCHMIDL_COX)
 
     idx = pstart+N*3;
 
@@ -29,10 +26,8 @@ function Xhat = ofdm_sc_tx(Xtild)
         HTRS(:,i) = packet_rx(idx:idx+plen-1);
         idx = idx+plen;
     end
-    % size(HTRS)
 
     DATA = packet_rx(idx:idx+plen-1);
-    % length(DATA)
 
     diffs = SCHMIDL_COX(end-N+1:end)./SCHMIDL_COX(end-2*N+1:end-N);
 
@@ -44,16 +39,18 @@ function Xhat = ofdm_sc_tx(Xtild)
     %% H estimation ========================
     HTRS = HTRS.*offset;
     for i = 1:4
-        Hunext = fft(unpext(HTRS(:,i)));
-        Hunext = Hunext/length(Hunext);
-        Hests(:,i) = Hunext./unpext(htrs(:,i));
+        Yunext = fft(unpext(HTRS(:,i)))/N;
+        Hests(:,i) = Yunext./unpext(htrs(:,i));
     end
 
     H = mean(Hests');
+    figure(2)
+    clf
+    plot(real(H))
 
     %% Data processing =====================
     DATA = DATA.*offset;
 
     Xhat = unpext(DATA);
-    Xhat = fft(Xhat)/length(Xhat)./H;
+    Xhat = fft(Xhat)/N./H;
 end
