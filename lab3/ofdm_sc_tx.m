@@ -2,10 +2,11 @@ function Xhat = ofdm_sc_tx(Xtild)
     j = sqrt(-1);
     N = length(Xtild);
 
+    %% Generate Schmidl-Cox sequence
     sc = (round(rand(1, N))-.5)*2;
-
     packet = [sc sc sc];
 
+    %% Generate channel estimation sequences
     for i = 1:4
         htr = ifft((round(rand(1, N))-.5)*2);
         htrs(:,i) = pext(htr);
@@ -13,15 +14,13 @@ function Xhat = ofdm_sc_tx(Xtild)
 
     packet = [packet reshape(htrs', 1, []) pext(ifft(Xtild))];
 
+    %% Transmit packet
     packet_rx = nonflat_channel_timing_error(packet);
     pstart = packet_detect(packet_rx)
-    length(packet_rx)
-    length(packet)
 
+    %% Break up packet
     SCHMIDL_COX = packet_rx(pstart:pstart+N*3-1);
-
     idx = pstart+N*3;
-
     plen = N+N/4;
 
     for i = 1:4
@@ -31,6 +30,7 @@ function Xhat = ofdm_sc_tx(Xtild)
 
     DATA = packet_rx(idx:idx+plen-1);
 
+    %% Estimate frequency offset
     diffs = SCHMIDL_COX(end-N+1:end)./SCHMIDL_COX(end-2*N+1:end-N);
 
     f_ests = log(diffs)./(j*N);
@@ -38,7 +38,7 @@ function Xhat = ofdm_sc_tx(Xtild)
 
     offset = exp(-j*f_est*N);
 
-    %% H estimation ========================
+    %% Estimate channel
     HTRS = HTRS.*offset;
     for i = 1:4
         Yunext = fft(unpext(HTRS(:,i)))/N;
@@ -50,7 +50,7 @@ function Xhat = ofdm_sc_tx(Xtild)
     clf
     plot(real(H))
 
-    %% Data processing =====================
+    %% Process data
     DATA = DATA.*offset;
 
     Xhat = unpext(DATA);
