@@ -26,12 +26,10 @@ function Xhat = ofdm_sc_tx(Xtild)
     plen = N+N/4;
 
     for i = 1:4
-        HESTS(:,i) = packet_rx(idx:idx+plen-1);
+        HTRS(:,i) = packet_rx(idx:idx+plen-1);
         idx = idx+plen;
     end
-    size(HESTS)
-
-    idx
+    size(HTRS)
 
     DATA = packet_rx(idx:idx+plen-1);
     length(DATA)
@@ -43,22 +41,27 @@ function Xhat = ofdm_sc_tx(Xtild)
     plot(real(packet_rx))
     legend('Tx', 'Rx')
 
-    % ytild = nonflat_channel_timing_error(xtx);
-    % ytild = ytild(17:N+16);
+    diffs = SCHMIDL_COX(end-N+1:end)./SCHMIDL_COX(end-2*N+1:end-N);
+
+    f_ests = log(diffs)./(j*N);
+    f_est = abs(mean(f_ests))
+
+    offset = exp(-j*f_est*N);
+
+    % H estimation
+    HTRS = HTRS.*offset;
+    for i = 1:4
+        Hunext = fft(unpext(HTRS(:,i)));
+        Hunext = Hunext/length(Hunext);
+        Hests(:,i) = Hunext./unpext(htrs(:,i));
+    end
+
+    Hest = mean(Hests);
+
+    DATA = DATA.*offset;
+
+    % Ytild = fft(ytild_f_est)/N;
 
     % ytild = ytild.*exp(-j*f_est);
     % Ytild = fft(ytild)/N;
-
-    % Xhat = Ytild./H;
-
-
-
-
-    % diffs = ytild(end-N+1:end)./ytild(end-2*N+1:end-N);
-
-    % f_ests = log(diffs)./(j*N);
-    % f_est = abs(mean(f_ests))
-
-    % ytild_f_est = ytild.*exp(-j*f_est*N);
-    % Ytild = fft(ytild_f_est)/N;
 end
