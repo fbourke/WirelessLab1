@@ -1,5 +1,5 @@
 function packet_start = packet_detect(x)
-    thresh = 5;
+    thresh = 3;
 
     i = 1;
     while 1

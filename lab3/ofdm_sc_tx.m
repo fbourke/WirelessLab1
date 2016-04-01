@@ -9,7 +9,7 @@ function Xhat = ofdm_sc_tx(Xtild)
     %% Generate channel estimation sequences
     for i = 1:4
         HTR = (round(rand(1, N))-.5)*2;
-        HTRs(:,i) = HTR;
+        HTRs_tx(:,i) = HTR;
 
         htr = ifft(HTR)*sqrt(N);
         htrs(:,i) = pext(htr);
@@ -19,7 +19,9 @@ function Xhat = ofdm_sc_tx(Xtild)
 
     %% Transmit packet
     packet_rx = nonflat_channel_timing_error(packet);
-    pstart = packet_detect(packet_rx)
+    pstart = 8;
+    % pstart = packet_detect(packet_rx)
+    % pstart = find_start_point_cox_schmidl(packet_rx(N:end), N)
 
     %% Break up packet
     SCHMIDL_COX = packet_rx(pstart:pstart+N*3-1);
@@ -28,7 +30,7 @@ function Xhat = ofdm_sc_tx(Xtild)
     plen = N+N/4;
 
     for i = 1:4
-        HTRS(:,i) = packet_rx(idx:idx+plen-1);
+        HTRs_rx(:,i) = packet_rx(idx:idx+plen-1);
         idx = idx+plen;
     end
 
@@ -40,20 +42,18 @@ function Xhat = ofdm_sc_tx(Xtild)
     f_ests = log(diffs)./(j*N);
     f_est = abs(mean(f_ests))
 
-    offset = exp(-j*f_est*N);
+    offset = transpose(exp(-j.*f_est.*[1:N]));
 
     %% Estimate channel
-    HTRS = HTRS.*offset;
     for i = 1:4
-        Yunext = fft(unpext(HTRS(:,i)))./N;
-        Hests(:,i) = Yunext./HTRs(:,i);
+        Yunext = fft(unpext(HTRs_rx(:,i)).*offset)./N;
+        Hests(:,i) = Yunext./HTRs_tx(:,i);
     end
 
     H = mean(transpose(Hests));
 
     %% Process data
-    DATA = DATA.*offset;
+    Xhat = unpext(DATA).*transpose(offset);
 
-    Xhat = unpext(DATA);
     Xhat = fft(Xhat)/N./H;
 end
