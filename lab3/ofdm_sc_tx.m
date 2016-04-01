@@ -26,16 +26,7 @@ function Xhat = ofdm_sc_tx(Xtild)
     %% Get Schmidl-Cox section of packet
     SCHMIDL_COX = packet_rx(pstart:pstart+N*3-1);
 
-    %% Estimate and apply frequency offset
-    set_back = N/8;
-    diffs = SCHMIDL_COX(end-N-set_back+1:end-set_back)./SCHMIDL_COX(end-2*N-set_back+1:end-N-set_back);
-
-    f_ests = log(diffs)./(j*N);
-    f_est = abs(mean(f_ests))
-
-    offset = exp(-j*f_est*[1:length(packet_rx)]);
-
-    packet_rx = packet_rx.*offset;
+    packet_rx = schmidl_cox(SCHMIDL_COX, packet_rx, N);
 
     %% Get training sequences and data
 
