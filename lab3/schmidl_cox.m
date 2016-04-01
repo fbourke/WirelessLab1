@@ -1,10 +1,12 @@
-function f_est = schmidl_cox(y)
-    j = sqrt(-1);
-    M = length(y)/3;
+function corrected = schmidl_cox(training, packet_in, N)
+    %% Estimate and apply frequency offset
+    set_back = N/8;
+    diffs = training(end-N-set_back+1:end-set_back)./training(end-2*N-set_back+1:end-N-set_back);
 
-    diffs = y(2*M:3*M)./y(M:2*M);
+    f_ests = log(diffs)./(j*N);
+    f_est = abs(mean(f_ests));
 
-    f_ests = log(diffs)./(j*M);
+    offset = exp(-j*f_est*[1:length(packet_in)]);
 
-    f_est = mean(f_ests);
+    corrected = packet_in.*offset;
 end
