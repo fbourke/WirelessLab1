@@ -14,6 +14,11 @@ tmp = interp(tmp, 2);
 h = zeros(24,1);
 h(8:8+length(tmp)-1) = tmp;
 
+figure(2)
+clf
+plot(real(fft(h, 64)/length(h)))
+hold all
+
 % convolve input signal with channel impulse response
 y = conv(x,h);
 

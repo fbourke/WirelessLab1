@@ -3,7 +3,7 @@ clc
 
 N = 64;
 
-data = (round(rand(1, N))-.5)*2;
+data = [1 (round(rand(1, N-1))-.5)*2];
 Xhat = ofdm_sc_tx(data);
 
 figure(1)

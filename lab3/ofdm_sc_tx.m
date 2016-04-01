@@ -19,12 +19,25 @@ function Xhat = ofdm_sc_tx(Xtild)
 
     %% Transmit packet
     packet_rx = nonflat_channel_timing_error(packet);
-    pstart = 8;
+    % pstart = 8;
     % pstart = packet_detect(packet_rx)
-    % pstart = find_start_point_cox_schmidl(packet_rx(N:end), N)
+    pstart = find_start_point_cox_schmidl(packet_rx(N:end), N);
 
-    %% Break up packet
+    %% Get Schmidl-Cox section of packet
     SCHMIDL_COX = packet_rx(pstart:pstart+N*3-1);
+
+    %% Estimate and apply frequency offset
+    set_back = N/8;
+    diffs = SCHMIDL_COX(end-N-set_back+1:end-set_back)./SCHMIDL_COX(end-2*N-set_back+1:end-N-set_back);
+
+    f_ests = log(diffs)./(j*N);
+    f_est = abs(mean(f_ests))
+
+    offset = exp(-j*f_est*[1:length(packet_rx)]);
+
+    packet_rx = packet_rx.*offset;
+
+    %% Get training sequences and data
 
     idx = pstart+N*3;
     plen = N+N/4;
@@ -36,24 +49,22 @@ function Xhat = ofdm_sc_tx(Xtild)
 
     DATA = packet_rx(idx:idx+plen-1);
 
-    %% Estimate frequency offset
-    diffs = SCHMIDL_COX(end-N-N/8+1:end-N/8)./SCHMIDL_COX(end-2*N-N/8+1:end-N-N/8);
-
-    f_ests = log(diffs)./(j*N);
-    f_est = abs(mean(f_ests))
-
-    offset = transpose(exp(-j.*f_est.*[1:N]));
-
     %% Estimate channel
     for i = 1:4
-        Yunext = fft(unpext(HTRs_rx(:,i)).*offset)./N;
+        Yunext = fft(unpext(HTRs_rx(:,i)))./N;
         Hests(:,i) = Yunext./HTRs_tx(:,i);
     end
 
     H = mean(transpose(Hests));
 
+    figure(2)
+    plot(real(H))
+
     %% Process data
-    Xhat = unpext(DATA).*transpose(offset);
+    Xhat = unpext(DATA);
 
     Xhat = fft(Xhat)/N./H;
+    if (Xhat(1) < 0)
+        Xhat = -Xhat;
+    end
 end
