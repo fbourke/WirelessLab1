@@ -64,7 +64,4 @@ function Xhat = ofdm_sc_tx(Xtild)
     Xhat = unpext(DATA);
 
     Xhat = fft(Xhat)/N./H;
-    if (Xhat(1) < 0)
-        Xhat = -Xhat;
-    end
 end
