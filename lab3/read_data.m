@@ -8,6 +8,7 @@ dfactor = 1
 figure(1)
 plot(abs(data(1:dfactor:end)))
 title('Our beautiful data')
+ylim([-1e-2 1e-2])
 xlabel('"Sample"')
 ylabel('Amplitude')
 
