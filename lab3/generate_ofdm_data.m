@@ -1,22 +1,29 @@
-data = (round(rand(1, N))-.5)*2;
-Xtild = ofdm_sc_tx(data);
+clear all
+N = 64;
+
+data = [ -1 -1  1  1  1 -1 -1 -1  1  1  1 -1 -1 -1  1  1 -1 -1 -1  1  1  1  1 -1 -1 -1  1 -1 -1 -1  1  1 -1  1  1  1 -1  1  1 -1 -1 -1  1 -1 -1 -1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1 -1  1 -1  1 -1  1];
+Xtild = data;
 
 j = sqrt(-1);
 N = length(Xtild);
 
 %% Generate Schmidl-Cox sequence
-sc = (round(rand(1, N))-.5)*2
+sc =  [-1  1  1  1  1  1 -1 -1  1 -1  1  1 -1 -1  1  1  1  1 -1  1 -1  1  1  1 -1  1  1 -1 -1  1  1  1  1  1 -1  1  1 -1 -1  1 -1 -1  1  1  1 -1  1 -1  1 -1  1  1 -1 -1  1 -1  1  1  1  1  1  1 -1 -1];
 packet = [sc sc sc];
 
 %% Generate channel estimation sequences
-for i = 1:4
-    HTR = (round(rand(1, N))-.5)*2;
-    HTRs_tx(:,i) = HTR;
 
-    htr = ifft(HTR)*sqrt(N);
-    htrs(:,i) = pext(htr);
+training =  [ -1 -1 -1  1 -1  1 -1 -1  1 -1 -1 -1  1  1 -1 -1  1 -1  1 -1 -1  1  1 -1  1  1  1  1  1 -1 -1 -1 -1 -1  1 -1  1  1  1 -1  1 -1 -1  1  1 -1  1 -1  1 -1  1  1  1 -1  1 -1  1  1 -1 -1  1  1  1  1 -1 -1 -1 -1 -1 -1  1  1  1  1  1 -1 -1  1 -1 -1  1 -1  1 -1  1 -1  1  1 -1 -1 -1  1  1 -1  1  1  1 -1  1 -1  1  1 -1 -1 -1  1 -1  1 -1 -1  1  1  1  1 -1 -1  1 -1  1 -1  1  1 -1 -1  1 -1 -1 -1  1 -1 -1  1 -1 -1 -1 -1  1  1  1 -1 -1  1 -1 -1 -1 -1  1 -1  1 -1 -1 -1  1  1  1 -1 -1 -1 -1 -1  1 -1  1  1 -1  1 -1 -1 -1  1  1  1 -1  1 -1  1  1  1 -1 -1  1  1 -1 -1 -1  1 -1 -1  1 -1 -1  1  1  1 -1 -1  1  1 -1 -1 -1 -1 -1 -1 -1 -1 -1  1 -1 -1  1  1 -1 -1 -1 -1  1 -1 -1  1  1 -1  1  1  1  1 -1  1 -1 -1 -1 -1 -1  1  1 -1  1 -1 -1  1 -1  1  1  1 -1 -1  1 -1  1 -1  1  1 -1  1  1  1];
+training = reshape(training,4,[]);
+for i = 1:4
+    HTRs_tx(:,i) = training(i,:);
+    htr = ifft(HTRs_tx(:,i))*sqrt(N);
+    htrs(:,i) = transpose(pext(transpose(htr)));
 end
 
-packet = [packet reshape(htrs, 1, []) pext(ifft(Xtild))*sqrt(N)];
+packet = [packet reshape(htrs, 1, []) pext(ifft(Xtild))*sqrt(N)]./4;
+
+out = packet
+plot(real(out))
 
 write_usrp_data_file(out, 'data.dat')
