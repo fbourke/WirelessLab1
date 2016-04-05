@@ -1,50 +1,58 @@
 function res = process_data()
-    load 'rx/usrp_samples.dat'
-
     j = sqrt(-1);
+    data = read_usrp_data_file('rx/usrp_samples.dat');
+    data_tx = [ -1 -1  1  1  1 -1 -1 -1  1  1  1 -1 -1 -1  1  1 -1 -1 -1  1  1  1  1 -1 -1 -1  1 -1 -1 -1  1  1 -1  1  1  1 -1  1  1 -1 -1 -1  1 -1 -1 -1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1 -1  1 -1  1 -1  1];
 
-    data = data';
-    % startindex = packet_detect(data)
-    startindex = 1.111e6
+    N = 64;
+    training =  [ 1 -1  1  1  1  1  1  1 -1 -1 -1 -1  1  1 -1  1 -1 -1 -1 -1 -1 -1  1  1  1  1 -1 -1  1 -1  1  1 -1  1 -1  1  1 -1 -1  1  1  1  1  1  1  1  1 -1 -1 -1  1  1  1 -1  1 -1  1 -1  1  1 -1  1 -1 -1  1 -1 -1 -1  1  1  1 -1 -1  1 -1 -1 -1 -1  1  1 -1 -1 -1 -1  1 -1  1 -1 -1  1  1 -1  1  1  1 -1 -1 -1 -1 -1 -1 -1  1 -1  1  1 -1  1  1  1 -1 -1 -1 -1 -1  1 -1 -1 -1 -1  1 -1 -1 -1  1 -1  1  1 -1  1 -1  1  1  1 -1 -1 -1  1  1  1 -1  1  1 -1  1 -1  1  1 -1  1  1 -1 -1  1 -1  1  1 -1  1  1  1  1  1 -1 -1 -1 -1 -1 -1 -1 -1  1  1  1 -1  1  1 -1  1 -1  1 -1  1 -1  1 -1  1 -1 -1  1 -1  1  1  1  1 -1 -1 -1  1  1 -1  1  1 -1 -1 -1  1  1 -1  1 -1  1  1  1  1 -1  1 -1 -1  1 -1 -1  1 -1  1 -1 -1  1  1 -1 -1 -1  1 -1 -1  1  1  1 -1  1  1  1  1 -1  1 -1 -1 -1 -1 -1  1  1 -1 -1 -1 -1];
+    HTRs_tx = reshape(training,4,[])';
 
-    pw = 24;
-    window = startindex+200*pw:startindex+1000;
-    seg = data(window);
+    data = transpose(data);
+    startindex = 957318;
 
-    % costas
-    seg = seg/std(seg);
-    seg_w = seg/std(seg);% important for costas loop
-    B = .8;
-    Phi = zeros(size(seg_w));
-    v = zeros(size(seg_w));
-    for i = 1:length(seg_w)-1
-        v(i) = seg_w(i)*exp(j*Phi(i));
-        e = -real(v(i))*imag(v(i));
-        Phi(i+1) = Phi(i) + B*e;
+    window = startindex:startindex+600;
+    packet = data(window);
+
+    pstart = 1;
+
+    %% Get Schmidl-Cox section of packet
+    SCHMIDL_COX = packet(pstart:pstart+N*3-1);
+    size(SCHMIDL_COX)
+
+    packet = schmidl_cox(SCHMIDL_COX, packet, N);
+    size(packet)
+
+    %% Get training sequences and data
+
+    idx = N*3;
+    plen = N+N/4;
+
+    for i = 1:4
+        HTRs_rx(:,i) = packet(idx:idx+plen-1);
+        idx = idx+plen;
     end
 
-    if v(1) < 0
-        v = -v;
+    DATA = packet(idx:idx+plen-1);
+
+    %% Estimate channel
+    for i = 1:4
+        Yunext = fft(unpext(HTRs_rx(:,i)))./N;
+        Hests(:,i) = Yunext./HTRs_tx(:,i);
     end
-    vmag = std(v);
-    thresh = .7*vmag;
-    vfilt = schmitt(real(v), thresh, -thresh);
 
-    vdiff = diff(vfilt);
-    edge1 = find(vdiff, 1);
-    % 15 for the training sequence
-    istart = edge1+15*pw+pw/2;
+    H = mean(transpose(Hests));
 
-    bits = vfilt(istart:pw:end);
+    figure(2)
+    plot(real(H))
 
-    bi2char(bits)
+    %% Process data
+    Xhat = unpext(DATA);
 
-    save 'rxdata/processed'
+    Xhat = fft(Xhat)/N./H;
 
     figure(2)
     clf
-    plot(real(v))
     hold on
-    plot(vfilt*vmag-vmag/2, 'g', 'linewidth', 2)
-    legend('Costas demodulated', 'Schmitt Corrected')
+    plot(-real(Xhat))
+    plot(real(data_tx))
 end
