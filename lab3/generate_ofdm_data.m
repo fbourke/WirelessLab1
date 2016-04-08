@@ -1,7 +1,7 @@
 clear all
 N = 64;
 
-data = [ -1 -1  1  1  1 -1 -1 -1  1  1  1 -1 -1 -1  1  1 -1 -1 -1  1  1  1  1 -1 -1 -1  1 -1 -1 -1  1  1 -1  1  1  1 -1  1  1 -1 -1 -1  1 -1 -1 -1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1 -1  1 -1  1 -1  1];
+data = [ 1 1 1 1 1 1 1 1 1 1 1  -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1  1 1 1 1 1 1 1 1 1 1 1 1 1  -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1  1  1 1  1 1  1 1  1 1  1];
 Xtild = data;
 
 j = sqrt(-1);
@@ -21,9 +21,11 @@ for i = 1:4
     htrs(:,i) = transpose(pext(transpose(htr)));
 end
 
-packet = [packet reshape(htrs, 1, []) pext(ifft(Xtild))*sqrt(N)]./4;
+padding = zeros(1,512);
+packet = [padding packet reshape(htrs, 1, []) pext(ifft(Xtild))*sqrt(N)]./4;
 
 out = packet
 plot(real(out))
+
 
 write_usrp_data_file(out, 'data.dat')
